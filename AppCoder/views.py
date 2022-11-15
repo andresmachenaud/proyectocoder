@@ -40,8 +40,7 @@ def profesores(request):
 def crear_profesor(request):
     if request.method == "POST":
         miFormulario = ProfesorFormulario(request.POST)
-        print(miFormulario)
-        if miFormulario.is_valid:
+        if miFormulario.is_valid():
             miProfesor = Profesor(nombre = miFormulario.cleaned_data["nombre"], apellido = miFormulario.cleaned_data["apellido"], email = miFormulario.cleaned_data["email"], profesion = miFormulario.cleaned_data["profesion"])
             miProfesor.save()
     miFormulario = ProfesorFormulario() #cuando crea el nuevo profesor le pasa al template un formulario vacío para que se vacíen los campos
