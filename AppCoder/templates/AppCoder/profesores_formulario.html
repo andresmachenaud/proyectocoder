@@ -3,7 +3,9 @@
 {% block contenidoQueCambia %}  
 
 {% if formulario.errors %}
-<p stlye="color: red ;"> Están mal los datos, revisar </p>
+    <div class="Revisar los datos">
+        {{ formulario.errors }}
+    </div>
 {% endif %}
 
 <form method="post">

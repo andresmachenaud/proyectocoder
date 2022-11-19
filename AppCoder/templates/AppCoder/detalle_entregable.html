@@ -1,0 +1,19 @@
+{% extends 'appcoder/base.html' %}
+
+{% block contenidoQueCambia %}  
+
+<h1 style="color: green;">Entregables</h1>
+<h2 style="color: green;">Detalle del desafío entregable</h2>
+
+<p> Nombre: {{entregable.nombre}} </p>
+<p> Fecha de entrega: {{entregable.fecha_de_entrega}} </p>
+
+{% if entregable.entregado %}
+    <p> Entregado: Sí </p>
+{% else %}
+    <p> Entregado: No </p>
+{% endif %}
+
+<a class="navbar-brand" href="{% url 'coder-entregables' %}">Volver al listado</a>
+
+{% endblock %}

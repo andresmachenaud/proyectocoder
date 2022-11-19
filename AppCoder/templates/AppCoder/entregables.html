@@ -5,6 +5,16 @@
 {% block contenidoQueCambia %}  
 
 <h1 style="color: green;">Entregables</h1>
+<h2 style="color: green;">Lista de desafíos entregables</h2>
+
+{% for entregable in object_list %}
+     <li> {{entregable.nombre}}  
+        <a href="{% url 'coder-entregables-detalle' entregable.id %}">Detalle</a>
+        <a href="{% url 'coder-entregables-editar' entregable.id %}">Editar</a>
+        <a href="{% url 'coder-entregables-borrar' entregable.id %}">Borrar</a>
+     </li>
+    {% endfor %}
+    </ul>
 
 <a class="navbar-brand" href="{% url 'coder-inicio' %}">Inicio</a>
 

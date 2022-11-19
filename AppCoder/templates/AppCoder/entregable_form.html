@@ -1,0 +1,20 @@
+<!-- Nombre del template que por defecto va a ir a buscar django-->
+
+{% extends 'AppCoder/base.html' %}
+
+{% block contenidoQueCambia %}  
+
+<form method="post">
+    {% csrf_token %}
+
+    <table>
+
+        {{form.as_p}}
+
+    </table>
+
+    <input type="submit" value="Crear/Editar">
+
+</form>
+
+{% endblock %}
