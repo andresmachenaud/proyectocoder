@@ -1,0 +1,16 @@
+{% extends 'AppCoder/base.html' %}
+
+{% load static %}
+
+{% block contenidoQueCambia %}  
+
+<h1 style="color: green;">Registro</h1>
+<h2 style="color: green;">Usuario correctamente registrado</h2>
+
+<p > </p>
+<p > </p>
+
+<a class="navbar-brand" href="{% url 'login' %}">Iniciar sesión</a>
+<a class="navbar-brand" href="{% url 'coder-inicio' %}">Volver a Inicio</a>
+
+{% endblock %}

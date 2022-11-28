@@ -7,7 +7,8 @@ admin.site.register(Curso)
 admin.site.register(Entregable)
 admin.site.register(Profesor)
 admin.site.register(Estudiante)
+admin.site.register(Avatar)
 
 #DATOS SUPERUSER
 #usuario: usuario
-#clave: usuario
+#clave: usuario2

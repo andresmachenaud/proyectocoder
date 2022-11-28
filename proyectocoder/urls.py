@@ -17,6 +17,8 @@ from django.contrib import admin
 from django.urls import path, include
 from proyectocoder.views import vista_saludo, dia_hoy, ano_nacimiento, vista_plantilla_bonita, vista_listado_alumnos,vista_listado_alumnos_2
 from AppCoder.views import *
+import proyectocoder.settings as settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -29,3 +31,6 @@ urlpatterns = [
     path("cursos/", listado_cursos),
     path('coder/', include('AppCoder.urls')),
 ]
+
+# Agregar las URLS de archivos estaticos
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

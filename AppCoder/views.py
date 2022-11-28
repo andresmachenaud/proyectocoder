@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from AppCoder.forms import *
 from AppCoder.models import *
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth import login,logout,authenticate
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 #Para abrir usando rutas relativas
 from proyectocoder.settings import BASE_DIR
@@ -16,8 +20,18 @@ def test(request):
     return HttpResponse(file.read())
 
 def inicio(request):
-    return render(request, "AppCoder/inicio.html")
+    if request.user.is_authenticated:
+        imagen_model = Avatar.objects.filter(user= request.user.id).order_by("-id")
+        if imagen_model:
+            imagen_url = imagen_model[0].imagen.url
+        else:
+            imagen_url = ""
+    else:
+        imagen_url = ""
+    return render(request, "appcoder/inicio.html", {"imagen_url": imagen_url})
 
+
+@login_required #USO DE DECORADORES
 def cursos(request):
     errores=""
     #Validamos tipo de petición
@@ -125,23 +139,93 @@ class EntregablesList(ListView):
     model = Entregable
     template_name = "AppCoder/entregables.html"
 
-class EntregableDetail(DetailView):
+class EntregableDetail(LoginRequiredMixin, DetailView): #USO DE MIXINS
     model = Entregable
     template_name = "AppCoder/detalle_entregable.html"
 
-class EntregableCreate(CreateView):
+class EntregableCreate(LoginRequiredMixin, CreateView):
     model = Entregable
     success_url = "/coder/entregables/"
     fields = ["nombre", "fecha_de_entrega", "entregado"]
     #acepta el template_name 
 
-class EntregableUpdate(UpdateView):
+class EntregableUpdate(LoginRequiredMixin, UpdateView):
     model = Entregable
     success_url = "/coder/entregables/"
     fields = ["nombre", "fecha_de_entrega", "entregado"]
     #acepta el template_name 
 
-class EntregableDelete(DeleteView):
+class EntregableDelete(LoginRequiredMixin, DeleteView):
     model = Entregable
     success_url = "/coder/entregables/"
     #acepta el template_name 
+
+def login_request(request):
+    if request.method == "POST":
+        miFormulario = AuthenticationForm(request, data=request.POST)
+        if miFormulario.is_valid():
+            data = miFormulario.cleaned_data
+            user = authenticate(username=data["username"], password=data["password"])
+            login(request, user)
+            return redirect("coder-inicio")
+        else:
+            return render(request, "AppCoder/login.html", {"formulario": miFormulario, "errores": "Credenciales inválidas"})
+    miFormulario = AuthenticationForm() #cuando crea el nuevo profesor le pasa al template un formulario vacío para que se vacíen los campos
+    contexto = {"formulario": miFormulario}
+    return render(request, "AppCoder/login.html", contexto)
+
+def register_request(request):
+
+    if request.method == "POST":
+        miFormulario = UserRegisterForm(request.POST)
+
+        if miFormulario.is_valid():
+            
+            miFormulario.save()
+            return redirect("registro-success")
+        else:
+            return render(request, "AppCoder/registro.html", { "formulario": miFormulario, "errores": "Datos inválidos"})
+
+    miFormulario  = UserRegisterForm()
+    return render(request, "AppCoder/registro.html", { "formulario": miFormulario})
+
+def confirmacion_registro(request):
+    return render(request, "AppCoder/confirmacion_registro.html")
+
+@login_required
+def editar_perfil(request):
+
+    usuario = request.user
+
+    if request.method == "POST":
+        miFormulario = UserEditForm(request.POST)
+        if miFormulario.is_valid():
+            data = miFormulario.cleaned_data
+            usuario.email = data["email"]
+            usuario.first_name = data["first_name"]
+            usuario.last_name = data["last_name"]
+            usuario.set_password(data["password1"])
+            usuario.save()
+            return redirect("coder-inicio")
+    else:
+        miFormulario = UserEditForm(initial = {"email": usuario.email, "first_name": usuario.first_name, "last_name": usuario.last_name})
+    return render(request, "AppCoder/editar_perfil.html", {"formulario": miFormulario, "usuario": usuario})
+
+@login_required
+def agregar_avatar(request):
+    
+    if request.method == "POST":
+        miFormulario = AvatarForm(request.POST, files=request.FILES)
+
+        if miFormulario.is_valid():
+            data = miFormulario.cleaned_data
+
+            usuario = request.user
+
+            avatar = Avatar(user=usuario, imagen=data["imagen"])
+            avatar.save()
+            return redirect("coder-inicio")
+        else:
+            return render(request, "AppCoder/agregar_avatar.html", {"form": miFormulario, "errores": miFormulario.errors })
+    miFormulario = AvatarForm()
+    return render(request, "AppCoder/agregar_avatar.html", {"form": miFormulario})
