@@ -28,7 +28,7 @@ def inicio(request):
             imagen_url = ""
     else:
         imagen_url = ""
-    return render(request, "appcoder/inicio.html", {"imagen_url": imagen_url})
+    return render(request, "AppCoder/inicio.html", {"imagen_url": imagen_url})
 
 
 @login_required #USO DE DECORADORES
