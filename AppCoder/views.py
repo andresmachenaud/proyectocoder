@@ -182,7 +182,7 @@ def register_request(request):
         if miFormulario.is_valid():
             
             miFormulario.save()
-            return redirect("registro-success")
+            return redirect("confirmacion-registro")
         else:
             return render(request, "AppCoder/registro.html", { "formulario": miFormulario, "errores": "Datos inválidos"})
 
